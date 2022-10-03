@@ -5,6 +5,7 @@ import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
 import br.com.gui.testes.exceptions.FilmeSemEstoqueException;
 import br.com.gui.testes.exceptions.LocadoraException;
+import br.com.gui.testes.utils.ListUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static br.com.gui.testes.utils.DataUtils.isMesmaData;
 import static br.com.gui.testes.utils.DataUtils.obterDataComDiferencaDias;
+import static br.com.gui.testes.utils.ListUtils.createFilmeListWithId;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -98,7 +100,7 @@ public class LocacaoServiceTest {
 	 * Esse modo funciona bem quando sabemos que a só terá uma exceção possível de ser lançada (que é a que colocamos na anotação)
 	 */
 	@Test(expected = FilmeSemEstoqueException.class)
-	public void testeLocacao_filmeSemEstoque() throws Exception {
+	public void naoDeveAlugarFilmeSemEstoque() throws Exception {
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -110,7 +112,7 @@ public class LocacaoServiceTest {
 	 * Fazendo desse modo, podemos ter mais controle sobre o que queremos verificar na exceção
 	 */
 	@Test
-	public void testeLocacao_filmeSemEstoque2() {
+	public void naoDeveAlugarFilmeSemEstoque2() {
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 		Filme filme2 = new Filme("Filme 1", 4, 5.0);
@@ -132,7 +134,7 @@ public class LocacaoServiceTest {
 	 * Teste para verificar se a exceção está sendo lançada corretamente (via @Rule)
 	 */
 	@Test
-	public void testeLocacao_filmeSemEstoque3() throws Exception {
+	public void naoDeveAlugarFilmeSemEstoque3() throws Exception {
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 
@@ -144,7 +146,7 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void testeLocacao_usuarioVazio() throws FilmeSemEstoqueException {
+	public void naoDeveAlugarFilmeSemUsuario() throws FilmeSemEstoqueException {
 		Filme filme = new Filme("Filme 1", 2, 5.0);
 
 		try {
@@ -158,7 +160,7 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void testeLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+	public void naoDeveAlugarFilmeSemFilme() throws FilmeSemEstoqueException, LocadoraException {
 		Usuario usuario = new Usuario("Usuario 1");
 
 		exception.expect(LocadoraException.class);
@@ -168,4 +170,63 @@ public class LocacaoServiceTest {
 
 		System.out.println("Aqui não continua");
 	}
+
+	//****************************************************************************************************************//
+
+	//TDD
+
+	@Test
+	public void desconto_3itens() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = createFilmeListWithId(
+				new Filme("Filme 1", 5, 20.0),
+				new Filme("Filme 2", 4, 10.0),
+				new Filme("Filme 3", 7, 8.0)); //6 com desconto
+
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		assertThat(locacao.getValor(), is(equalTo(36.0)));
+	}
+
+	@Test
+	public void desconto_4itens() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = createFilmeListWithId(
+						new Filme("Filme 1", 5, 20.0),
+						new Filme("Filme 2", 4, 10.0),
+						new Filme("Filme 3", 7, 8.0), //6 com desconto
+						new Filme("Filme 4", 3, 10.0)); //5 com desconto
+
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		assertThat(locacao.getValor(), is(equalTo(41.0)));
+	}
+
+	@Test
+	public void desconto_5itens() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = createFilmeListWithId(
+				new Filme("Filme 1", 5, 20.0),
+				new Filme("Filme 2", 4, 10.0),
+				new Filme("Filme 3", 7, 8.0), //6 com desconto
+				new Filme("Filme 4", 3, 10.0), //5 com desconto
+				new Filme("Filme 5", 3, 40.0)); //10 com desconto
+
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		assertThat(locacao.getValor(), is(equalTo(51.0)));
+	}
+
+	@Test
+	public void desconto_6itens() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = createFilmeListWithId(
+				new Filme("Filme 1", 5, 20.0),
+				new Filme("Filme 2", 4, 10.0),
+				new Filme("Filme 3", 7, 8.0), //6 com desconto
+				new Filme("Filme 4", 3, 10.0), //5 com desconto
+				new Filme("Filme 5", 3, 40.0), //10 com desconto
+				new Filme("Filme 6", 3, 20.0)); //0 com desconto
+
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		assertThat(locacao.getValor(), is(equalTo(51.0)));
+	}
+
 }

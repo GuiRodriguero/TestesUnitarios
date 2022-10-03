@@ -27,11 +27,11 @@ public class LocacaoService {
 			throw new FilmeSemEstoqueException("Filme sem estoque");
 		}
 
-
 		Locacao locacao = new Locacao();
 		locacao.setFilme(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
+		setDesconto(filmes);
 		locacao.setValor(filmes.stream().mapToDouble(Filme::getPrecoLocacao).sum());
 		
 		//Entrega no dia seguinte
@@ -43,5 +43,22 @@ public class LocacaoService {
 		//TODO adicionar método para salvar
 		
 		return locacao;
+	}
+
+	private void setDesconto(List<Filme> filmes) {
+		for (Filme filme : filmes) {
+			if(filme.getId() == 3){
+			 	filme.setPrecoLocacao(filme.getPrecoLocacao() - filme.getPrecoLocacao() * 0.25);
+			}
+			if(filme.getId() == 4){
+				filme.setPrecoLocacao(filme.getPrecoLocacao() - filme.getPrecoLocacao() * 0.50);
+			}
+			if(filme.getId() == 5){
+				filme.setPrecoLocacao(filme.getPrecoLocacao() - filme.getPrecoLocacao() * 0.75);
+			}
+			if(filme.getId() == 6){
+				filme.setPrecoLocacao(0.0);
+			}
+		}
 	}
 }
