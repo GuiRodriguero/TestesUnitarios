@@ -5,7 +5,6 @@ import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
 import br.com.gui.testes.exceptions.FilmeSemEstoqueException;
 import br.com.gui.testes.exceptions.LocadoraException;
-import br.com.gui.testes.utils.ListUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,17 +12,18 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static br.com.gui.testes.utils.DataUtils.isMesmaData;
-import static br.com.gui.testes.utils.DataUtils.obterDataComDiferencaDias;
+import static br.com.gui.testes.utils.DataUtils.*;
 import static br.com.gui.testes.utils.ListUtils.createFilmeListWithId;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 public class LocacaoServiceTest {
 
@@ -53,6 +53,8 @@ public class LocacaoServiceTest {
 	 */
 	@Test
 	public void testeLocacaoRule() throws Exception{
+		assumeFalse(verificarDiaSemana(new Date(), Calendar.SATURDAY));
+
 		//cenario
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 2, 5.0);
@@ -227,6 +229,15 @@ public class LocacaoServiceTest {
 
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 		assertThat(locacao.getValor(), is(equalTo(51.0)));
+	}
+
+	@Test
+	public void naoDeveDevolverFilmeNoDomingoSeAlugadoNoSabado() throws FilmeSemEstoqueException, LocadoraException {
+		assumeTrue(verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = asList(new Filme("Filme 3", 7, 8.0));
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		assertTrue(verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY));
 	}
 
 }

@@ -1,5 +1,6 @@
 package br.com.gui.testes.servicos;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import br.com.gui.testes.exceptions.LocadoraException;
 import br.com.gui.testes.utils.DataUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
+import static br.com.gui.testes.utils.DataUtils.adicionarDias;
+import static br.com.gui.testes.utils.DataUtils.verificarDiaSemana;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
@@ -37,6 +40,9 @@ public class LocacaoService {
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();
 		dataEntrega = DataUtils.adicionarDias(dataEntrega, 1);
+		if(verificarDiaSemana(dataEntrega, Calendar.SUNDAY)){
+			dataEntrega = adicionarDias(dataEntrega, 1);
+		}
 		locacao.setDataRetorno(dataEntrega);
 		
 		//Salvando a locacao...	
