@@ -159,7 +159,7 @@ public class LocacaoServiceTest {
 			service.alugarFilme(null, asList(filme));
 			fail("Deveria ter lançado uma exceção... o cenário criado acima deve estar errado para este teste");
 		} catch (LocadoraException e) {
-			assertThat(e.getMessage(), is("Usuário vazio"));
+			assertThat(e.getMessage(), is("Usuario vazio"));
 		}
 
 		System.out.println("Aqui continua");

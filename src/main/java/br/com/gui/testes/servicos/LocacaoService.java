@@ -21,7 +21,7 @@ public class LocacaoService {
 	
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws LocadoraException, FilmeSemEstoqueException {
 		if(usuario == null){
-			throw new LocadoraException("Usuário vazio");
+			throw new LocadoraException("Usuario vazio");
 		}
 		if(isEmpty(filmes)){
 			throw new LocadoraException("Filme vazio");
