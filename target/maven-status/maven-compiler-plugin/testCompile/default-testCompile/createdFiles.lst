@@ -1,3 +1,5 @@
+br\com\gui\testes\servicos\CalculoValorLocacaoTest.class
 br\com\gui\testes\servicos\AssertTest.class
 br\com\gui\testes\servicos\CalculadoraTest.class
+suites\SuiteExecucao.class
 br\com\gui\testes\servicos\LocacaoServiceTest.class

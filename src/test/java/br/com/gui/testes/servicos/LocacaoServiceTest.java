@@ -1,5 +1,7 @@
 package br.com.gui.testes.servicos;
 
+import br.com.gui.testes.builders.FilmeBuilder;
+import br.com.gui.testes.builders.UsuarioBuilder;
 import br.com.gui.testes.entidades.Filme;
 import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
@@ -58,9 +60,9 @@ public class LocacaoServiceTest {
 		assumeFalse(verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
 		//cenario
-		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 2, 5.0);
-		Filme filme2 = new Filme("Filme 2", 2, 14.0);
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
+		Filme filme = FilmeBuilder.umFilme().comNome("Filme 1").comValor(5.0).getFilme();
+		Filme filme2 = FilmeBuilder.umFilme().comNome("Filme 2").comValor(14.0).getFilme();
 		List<Filme> filmes = new ArrayList<>();
 		filmes.add(filme);
 		filmes.add(filme2);
@@ -80,7 +82,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void testeLocacao() throws Exception {
 		//cenario
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		Filme filme = new Filme("Filme 1", 2, 5.0);
 		Filme filme2 = new Filme("Filme 2", 2, 5.0);
 		List<Filme> filmes = new ArrayList<>();
@@ -107,8 +109,8 @@ public class LocacaoServiceTest {
 	 */
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void naoDeveAlugarFilmeSemEstoque() throws Exception {
-		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 0, 5.0);
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
+		Filme filme = FilmeBuilder.umFilmeSemEstoque().getFilme();
 
 		service.alugarFilme(usuario, asList(filme));
 	}
@@ -119,10 +121,10 @@ public class LocacaoServiceTest {
 	 */
 	@Test
 	public void naoDeveAlugarFilmeSemEstoque2() {
-		Usuario usuario = new Usuario("Usuario 1");
-		Filme filme = new Filme("Filme 1", 0, 5.0);
-		Filme filme2 = new Filme("Filme 1", 4, 5.0);
-		Filme filme3 = new Filme("Filme 1", 0, 5.0);
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
+		Filme filme = FilmeBuilder.umFilmeSemEstoque().getFilme();
+		Filme filme2 = FilmeBuilder.umFilme().comNome("Filme 1").comValor(5.0).getFilme();
+		Filme filme3 = FilmeBuilder.umFilmeSemEstoque().getFilme();
 		List<Filme> filmes = new ArrayList<>();
 		filmes.add(filme);
 		filmes.add(filme2);
@@ -141,7 +143,7 @@ public class LocacaoServiceTest {
 	 */
 	@Test
 	public void naoDeveAlugarFilmeSemEstoque3() throws Exception {
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		Filme filme = new Filme("Filme 1", 0, 5.0);
 
 		//Quando usamos a Rule, fazemos os expects antes da ação, como se eles fossem parte do cenário
@@ -167,7 +169,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void naoDeveAlugarFilmeSemFilme() throws FilmeSemEstoqueException, LocadoraException {
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 
 		exception.expect(LocadoraException.class);
 		exception.expectMessage("Filme vazio");
@@ -183,7 +185,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void desconto_3itens() throws FilmeSemEstoqueException, LocadoraException {
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		List<Filme> filmes = createFilmeListWithId(
 				new Filme("Filme 1", 5, 20.0),
 				new Filme("Filme 2", 4, 10.0),
@@ -195,7 +197,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void desconto_4itens() throws FilmeSemEstoqueException, LocadoraException {
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		List<Filme> filmes = createFilmeListWithId(
 						new Filme("Filme 1", 5, 20.0),
 						new Filme("Filme 2", 4, 10.0),
@@ -208,7 +210,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void desconto_5itens() throws FilmeSemEstoqueException, LocadoraException {
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		List<Filme> filmes = createFilmeListWithId(
 				new Filme("Filme 1", 5, 20.0),
 				new Filme("Filme 2", 4, 10.0),
@@ -222,7 +224,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void desconto_6itens() throws FilmeSemEstoqueException, LocadoraException {
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		List<Filme> filmes = createFilmeListWithId(
 				new Filme("Filme 1", 5, 20.0),
 				new Filme("Filme 2", 4, 10.0),
@@ -238,7 +240,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void naoDeveDevolverFilmeNoDomingoSeAlugadoNoSabado() throws FilmeSemEstoqueException, LocadoraException {
 		assumeTrue(verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		List<Filme> filmes = asList(new Filme("Filme 3", 7, 8.0));
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
