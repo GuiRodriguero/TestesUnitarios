@@ -1,5 +1,10 @@
-br\com\gui\testes\entidades\Locacao.class
 br\com\gui\testes\utils\DataUtils.class
-br\com\gui\testes\entidades\Filme.class
+br\com\gui\testes\entidades\Calculadora.class
+br\com\gui\testes\exceptions\DivisaoPorZeroException.class
 br\com\gui\testes\entidades\Usuario.class
+br\com\gui\testes\utils\ListUtils.class
 br\com\gui\testes\servicos\LocacaoService.class
+br\com\gui\testes\entidades\Locacao.class
+br\com\gui\testes\entidades\Filme.class
+br\com\gui\testes\exceptions\FilmeSemEstoqueException.class
+br\com\gui\testes\exceptions\LocadoraException.class
