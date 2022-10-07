@@ -5,6 +5,7 @@ import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
 import br.com.gui.testes.exceptions.FilmeSemEstoqueException;
 import br.com.gui.testes.exceptions.LocadoraException;
+import br.com.gui.testes.matchers.MyMatchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static br.com.gui.testes.matchers.MyMatchers.*;
 import static br.com.gui.testes.utils.DataUtils.*;
 import static br.com.gui.testes.utils.ListUtils.createFilmeListWithId;
 import static java.util.Arrays.asList;
@@ -71,6 +73,8 @@ public class LocacaoServiceTest {
 		error.checkThat(locacao.getValor(), is(equalTo(19.0)));
 		error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
 		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+		error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDeDias(1));
+		error.checkThat(locacao.getDataLocacao(), ehHoje());
 	}
 
 	@Test
@@ -237,7 +241,10 @@ public class LocacaoServiceTest {
 		Usuario usuario = new Usuario("Usuario 1");
 		List<Filme> filmes = asList(new Filme("Filme 3", 7, 8.0));
 		Locacao locacao = service.alugarFilme(usuario, filmes);
+
 		assertTrue(verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY));
+		assertThat(locacao.getDataRetorno(), caiEm(Calendar.MONDAY)); //Mesma coisa feita acima, mas com Matcher próprio
+		assertThat(locacao.getDataRetorno(), caNumaSegunda()); //Mesma coisa feita acima, mas com Matcher próprio
 	}
 
 }
