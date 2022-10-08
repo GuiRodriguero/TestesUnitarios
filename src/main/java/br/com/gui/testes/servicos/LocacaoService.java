@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import br.com.gui.testes.dao.LocacaoDAO;
 import br.com.gui.testes.entidades.Filme;
 import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
@@ -18,7 +19,10 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 public class LocacaoService {
-	
+
+	private LocacaoDAO dao;
+	private SPCService spcService;
+
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws LocadoraException, FilmeSemEstoqueException {
 		if(usuario == null){
 			throw new LocadoraException("Usuario vazio");
@@ -28,6 +32,9 @@ public class LocacaoService {
 		}
 		if(filmes.stream().anyMatch(f -> f.getEstoque() == 0)){
 			throw new FilmeSemEstoqueException("Filme sem estoque");
+		}
+		if(spcService.possuiNegativacao(usuario)){
+			throw new LocadoraException("Usuario negativado");
 		}
 
 		Locacao locacao = new Locacao();
@@ -45,10 +52,18 @@ public class LocacaoService {
 		}
 		locacao.setDataRetorno(dataEntrega);
 		
-		//Salvando a locacao...	
-		//TODO adicionar método para salvar
-		
+		//Salvando a locacao...
+		dao.salvar(locacao);
+
 		return locacao;
+	}
+
+	public void setLocacaoDAO(LocacaoDAO dao){
+		this.dao = dao;
+	}
+
+	public void setSpcService(SPCService spcService){
+		this.spcService = spcService;
 	}
 
 	private void setDesconto(List<Filme> filmes) {

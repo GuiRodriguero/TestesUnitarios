@@ -1,5 +1,7 @@
 package br.com.gui.testes.servicos;
 
+import br.com.gui.testes.dao.LocacaoDAO;
+import br.com.gui.testes.dao.LocacaoDAOFake;
 import br.com.gui.testes.entidades.Filme;
 import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
@@ -9,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +25,8 @@ import static org.junit.Assert.assertThat;
 public class CalculoValorLocacaoTest {
 
     private LocacaoService service;
+    private LocacaoDAO dao;
+    private SPCService spcService;
 
     @Parameterized.Parameter //default é 0
     public List<Filme> filmes;
@@ -33,6 +38,10 @@ public class CalculoValorLocacaoTest {
     @Before
     public void setup(){
         service = new LocacaoService();
+        dao = Mockito.mock(LocacaoDAO.class);
+        service.setLocacaoDAO(dao);
+        spcService = Mockito.mock(SPCService.class);
+        service.setSpcService(spcService);
     }
 
     private static Filme filme1 = new Filme(1, "Filme 1", 2, 4.0);

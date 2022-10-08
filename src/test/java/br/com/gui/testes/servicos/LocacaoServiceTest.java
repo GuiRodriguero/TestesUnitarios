@@ -2,6 +2,8 @@ package br.com.gui.testes.servicos;
 
 import br.com.gui.testes.builders.FilmeBuilder;
 import br.com.gui.testes.builders.UsuarioBuilder;
+import br.com.gui.testes.dao.LocacaoDAO;
+import br.com.gui.testes.dao.LocacaoDAOFake;
 import br.com.gui.testes.entidades.Filme;
 import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
@@ -13,6 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +35,8 @@ import static org.junit.Assume.assumeTrue;
 public class LocacaoServiceTest {
 
 	private LocacaoService service;
+	private LocacaoDAO dao;
+	private SPCService spcService;
 	
 	@Rule
 	public ErrorCollector error = new ErrorCollector(); //Iremos mudar de assertThat para checkThat
@@ -45,6 +50,10 @@ public class LocacaoServiceTest {
 	@Before
 	public void setup(){
 		service = new LocacaoService();
+		dao = Mockito.mock(LocacaoDAO.class);
+		service.setLocacaoDAO(dao);
+		spcService = Mockito.mock(SPCService.class);
+		service.setSpcService(spcService);
 	}
 
 	/**
@@ -81,6 +90,8 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void testeLocacao() throws Exception {
+		assumeFalse(verificarDiaSemana(new Date(), Calendar.SATURDAY));
+
 		//cenario
 		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		Filme filme = new Filme("Filme 1", 2, 5.0);
@@ -144,7 +155,7 @@ public class LocacaoServiceTest {
 	@Test
 	public void naoDeveAlugarFilmeSemEstoque3() throws Exception {
 		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
-		Filme filme = new Filme("Filme 1", 0, 5.0);
+		Filme filme = FilmeBuilder.umFilmeSemEstoque().getFilme();
 
 		//Quando usamos a Rule, fazemos os expects antes da ação, como se eles fossem parte do cenário
 		exception.expect(Exception.class);
@@ -155,7 +166,7 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void naoDeveAlugarFilmeSemUsuario() throws FilmeSemEstoqueException {
-		Filme filme = new Filme("Filme 1", 2, 5.0);
+		Filme filme = FilmeBuilder.umFilme().comNome("Filme 1").comValor(5.0).getFilme();
 
 		try {
 			service.alugarFilme(null, asList(filme));
@@ -247,6 +258,24 @@ public class LocacaoServiceTest {
 		assertTrue(verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY));
 		assertThat(locacao.getDataRetorno(), caiEm(Calendar.MONDAY)); //Mesma coisa feita acima, mas com Matcher próprio
 		assertThat(locacao.getDataRetorno(), caNumaSegunda()); //Mesma coisa feita acima, mas com Matcher próprio
+	}
+
+	//****************************************************************************************************************//
+
+	//Mock
+
+	@Test
+	public void naoDeveAlugarFilmeParaUsuarioNegativado() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
+		Filme filme = FilmeBuilder.umFilme().comNome("Filme 1").comValor(5.0).getFilme();
+
+		Mockito.when(spcService.possuiNegativacao(usuario)).thenReturn(true);
+
+		exception.expect(LocadoraException.class);
+		exception.expectMessage("Usuario negativado");
+
+		service.alugarFilme(usuario, asList(filme));
+
 	}
 
 }
