@@ -15,8 +15,6 @@ public class CalculadoraMockTest {
     private Calculadora calcMock;
     @Spy
     private Calculadora calcSpy;
-    @Mock
-    private EmailService emailService;
 
     @Before
     public void setup(){

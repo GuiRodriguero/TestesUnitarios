@@ -9,12 +9,18 @@ import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
 import br.com.gui.testes.exceptions.FilmeSemEstoqueException;
 import br.com.gui.testes.exceptions.LocadoraException;
+import br.com.gui.testes.utils.DataUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +38,9 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(LocacaoService.class)
+@PowerMockIgnore("jdk.internal.reflect.*")
 public class LocacaoServiceTest {
 
 	@InjectMocks //Classe de teste princial (aonde estão os métodos que queremos testar)
@@ -250,10 +259,12 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void naoDeveDevolverFilmeNoDomingoSeAlugadoNoSabado() throws FilmeSemEstoqueException, LocadoraException {
-		assumeTrue(verificarDiaSemana(new Date(), Calendar.SATURDAY));
+	public void naoDeveDevolverFilmeNoDomingoSeAlugadoNoSabado() throws Exception {
 		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		List<Filme> filmes = asList(new Filme("Filme 3", 7, 8.0));
+		PowerMockito.whenNew(Date.class).withAnyArguments().thenReturn(DataUtils.obterData(15, 10, 2022));
+
+		//Ação
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 
 		assertTrue(verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY));
