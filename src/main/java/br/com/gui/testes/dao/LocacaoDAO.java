@@ -5,7 +5,7 @@ import br.com.gui.testes.entidades.Locacao;
 import java.util.List;
 
 public interface LocacaoDAO {
-    public void salvar(Locacao locacao);
+    void salvar(Locacao locacao);
 
     List<Locacao> obterLocacoesPendentes();
 }

@@ -4,7 +4,10 @@ import br.com.gui.testes.entidades.Calculadora;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import static org.hamcrest.CoreMatchers.is;
 
 public class CalculadoraMockTest {
 
@@ -17,19 +20,29 @@ public class CalculadoraMockTest {
     public void testeMockitoConfuso(){
         Calculadora calc = Mockito.mock(Calculadora.class);
         Mockito.when(calc.somar(1, 2)).thenReturn(5);
-        Assert.assertThat(calc.somar(1, 8), CoreMatchers.is(0));
+        Assert.assertThat(calc.somar(1, 8), is(0));
     }
 
     @Test
     public void teste(){
         Calculadora calc = Mockito.mock(Calculadora.class);
         Mockito.when(calc.somar(Mockito.anyInt(), Mockito.anyInt())).thenReturn(5);
-        Assert.assertThat(calc.somar(1, 9), CoreMatchers.is(5));
+        Assert.assertThat(calc.somar(1, 9), is(5));
     }
     @Test
     public void teste2(){
         Calculadora calc = Mockito.mock(Calculadora.class);
         Mockito.when(calc.somar(Mockito.eq(1), Mockito.anyInt())).thenReturn(5);
-        Assert.assertThat(calc.somar(1, 6), CoreMatchers.is(5));
+        Assert.assertThat(calc.somar(1, 6), is(5));
+    }
+
+    @Test
+    public void teste3(){
+        Calculadora calc = Mockito.mock(Calculadora.class);
+        ArgumentCaptor<Integer> argCapt = ArgumentCaptor.forClass(Integer.class);
+        Mockito.when(calc.somar(argCapt.capture(), argCapt.capture())).thenReturn(5);
+
+        Assert.assertThat(calc.somar(1, 6), is(5));
+        System.out.println("CalculadoraMockTest#teste3: " + argCapt.getAllValues());
     }
 }

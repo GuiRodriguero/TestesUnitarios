@@ -69,8 +69,16 @@ public class LocacaoService {
 	 */
 	public void notificarAtrasos(){
 		dao.obterLocacoesPendentes().stream()
-				.filter(locacao -> locacao.getDataRetorno().before(new Date()))
+				.filter(l -> l.getDataRetorno().before(new Date()))
 				.forEach(l -> emailService.notificarAtraso(l.getUsuario()));
+	}
+
+	public void prorrogarLocacao(Locacao locacao, int dias){
+		Locacao novaLocacao = locacao;
+		novaLocacao.setDataLocacao(new Date());
+		novaLocacao.setDataRetorno(DataUtils.obterDataComDiferencaDias(dias));
+		novaLocacao.setValor(locacao.getValor() * dias);
+		dao.salvar(novaLocacao);
 	}
 
 	private void setDesconto(List<Filme> filmes) {

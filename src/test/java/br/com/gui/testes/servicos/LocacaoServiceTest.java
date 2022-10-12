@@ -1,6 +1,7 @@
 package br.com.gui.testes.servicos;
 
 import br.com.gui.testes.builders.FilmeBuilder;
+import br.com.gui.testes.builders.LocacaoBuilder;
 import br.com.gui.testes.builders.UsuarioBuilder;
 import br.com.gui.testes.dao.LocacaoDAO;
 import br.com.gui.testes.entidades.Filme;
@@ -13,10 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -324,5 +322,25 @@ public class LocacaoServiceTest {
 		exception.expectMessage("SPC fora do ar");
 
 		service.alugarFilme(usuario, filmes);
+	}
+
+	/**
+	 * Usando o ArgumentCaptor, podemos recuperar a entidade que criamos no método prorrogarLocaco() mesmo que ele
+	 * seja void e não retorne a locação que criamos dentro dele.
+	 */
+	@Test
+	public void deveProrrogarUmaLocacao(){
+		//Cenário
+		Locacao locacao = LocacaoBuilder.umaLocacao().getLocacao();
+		//Ação
+		service.prorrogarLocacao(locacao, 3);
+		//Verificação
+		ArgumentCaptor<Locacao> argCapt = ArgumentCaptor.forClass(Locacao.class);
+		Mockito.verify(dao).salvar(argCapt.capture());
+		Locacao locacaoRetornada = argCapt.getValue();
+
+		error.checkThat(locacaoRetornada.getValor(), is(12.0));
+		error.checkThat(locacaoRetornada.getDataLocacao(), ehHoje());
+		error.checkThat(locacaoRetornada.getDataRetorno(), ehHojeComDiferencaDeDias(3));
 	}
 }
