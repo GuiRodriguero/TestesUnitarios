@@ -32,7 +32,14 @@ public class LocacaoService {
 		if(filmes.stream().anyMatch(f -> f.getEstoque() == 0)){
 			throw new FilmeSemEstoqueException("Filme sem estoque");
 		}
-		if(spcService.possuiNegativacao(usuario)){
+
+		boolean isUsuarioNegativado;
+		try {
+			isUsuarioNegativado = spcService.possuiNegativacao(usuario);
+		} catch (Exception e) {
+			throw new LocadoraException("SPC fora do ar");
+		}
+		if(isUsuarioNegativado){
 			throw new LocadoraException("Usuario negativado");
 		}
 

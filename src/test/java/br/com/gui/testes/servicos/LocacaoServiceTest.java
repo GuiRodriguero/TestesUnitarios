@@ -268,7 +268,7 @@ public class LocacaoServiceTest {
 	//Mock
 
 	@Test
-	public void naoDeveAlugarFilmeParaUsuarioNegativado() throws FilmeSemEstoqueException {
+	public void naoDeveAlugarFilmeParaUsuarioNegativado() throws Exception {
 		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		Filme filme = FilmeBuilder.umFilme().comNome("Filme 1").comValor(5.0).getFilme();
 
@@ -312,4 +312,17 @@ public class LocacaoServiceTest {
 		Mockito.verifyZeroInteractions(spcService);
 	}
 
+	@Test
+	public void deveTratarErroNoMockSPC() throws Exception {
+		//Cenário
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
+		List<Filme> filmes = asList(FilmeBuilder.umFilme().getFilme());
+		Mockito.when(spcService.possuiNegativacao(usuario)).thenThrow(new Exception("Erro SPC"));
+
+		//Verificação
+		exception.expect(LocadoraException.class);
+		exception.expectMessage("SPC fora do ar");
+
+		service.alugarFilme(usuario, filmes);
+	}
 }
