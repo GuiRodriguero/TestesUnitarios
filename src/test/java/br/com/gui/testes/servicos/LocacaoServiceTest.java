@@ -1,7 +1,6 @@
 package br.com.gui.testes.servicos;
 
 import br.com.gui.testes.builders.FilmeBuilder;
-import br.com.gui.testes.builders.LocacaoBuilder;
 import br.com.gui.testes.builders.UsuarioBuilder;
 import br.com.gui.testes.dao.LocacaoDAO;
 import br.com.gui.testes.entidades.Filme;
@@ -14,8 +13,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,9 +36,13 @@ import static org.junit.Assume.assumeTrue;
 
 public class LocacaoServiceTest {
 
+	@InjectMocks //Classe de teste princial (aonde estão os métodos que queremos testar)
 	private LocacaoService service;
+	@Mock //Mock
 	private LocacaoDAO dao;
+	@Mock
 	private SPCService spcService;
+	@Mock
 	private EmailService emailService;
 	
 	@Rule
@@ -51,13 +56,7 @@ public class LocacaoServiceTest {
 	 */
 	@Before
 	public void setup(){
-		service = new LocacaoService();
-		dao = Mockito.mock(LocacaoDAO.class);
-		service.setLocacaoDAO(dao);
-		spcService = Mockito.mock(SPCService.class);
-		service.setSpcService(spcService);
-		emailService = Mockito.mock(EmailService.class);
-		service.setEmailService(emailService);
+		MockitoAnnotations.initMocks(this);
 	}
 
 	/**

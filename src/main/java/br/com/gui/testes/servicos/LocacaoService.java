@@ -66,18 +66,6 @@ public class LocacaoService {
 				.forEach(l -> emailService.notificarAtraso(l.getUsuario()));
 	}
 
-	public void setLocacaoDAO(LocacaoDAO dao){
-		this.dao = dao;
-	}
-
-	public void setSpcService(SPCService spcService){
-		this.spcService = spcService;
-	}
-
-	public void setEmailService(EmailService emailService) {
-		this.emailService = emailService;
-	}
-
 	private void setDesconto(List<Filme> filmes) {
 		for (Filme filme : filmes) {
 			if(filme.getId() == 3){
