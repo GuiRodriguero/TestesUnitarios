@@ -3,13 +3,25 @@ package br.com.gui.testes.servicos;
 import br.com.gui.testes.entidades.Calculadora;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.*;
 
 import static org.hamcrest.CoreMatchers.is;
 
 public class CalculadoraMockTest {
+
+    @Mock
+    private Calculadora calcMock;
+    @Spy
+    private Calculadora calcSpy;
+    @Mock
+    private EmailService emailService;
+
+    @Before
+    public void setup(){
+        MockitoAnnotations.initMocks(this);
+    }
 
     /**
      * Neste teste, estamos mockando a chamada do Calculadora.somar(). Acontece que
@@ -43,6 +55,14 @@ public class CalculadoraMockTest {
         Mockito.when(calc.somar(argCapt.capture(), argCapt.capture())).thenReturn(5);
 
         Assert.assertThat(calc.somar(1, 6), is(5));
-        System.out.println("CalculadoraMockTest#teste3: " + argCapt.getAllValues());
+//        System.out.println("CalculadoraMockTest#teste3: " + argCapt.getAllValues());
+    }
+
+    @Test
+    public void mockVsSpy(){
+        //calcMock.somar(1, 2); Retorna 0 (pois o mock vê que o método retorna um int e retona o valor default de um int)
+        //calcSpy.somar(1, 2); Retorna 3 (o spy verifica como o método se comporta e replica esse comportamento)
+        //calcMock.imprime(); Como imprime não tem retorno, só um sout, não faz nada
+        //calcSpy.imprime(); Caiu no sout e imprime
     }
 }
