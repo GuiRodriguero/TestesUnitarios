@@ -1,20 +1,20 @@
 package br.com.gui.testes.servicos;
 
 import br.com.gui.testes.builders.FilmeBuilder;
+import br.com.gui.testes.builders.LocacaoBuilder;
 import br.com.gui.testes.builders.UsuarioBuilder;
 import br.com.gui.testes.dao.LocacaoDAO;
-import br.com.gui.testes.dao.LocacaoDAOFake;
 import br.com.gui.testes.entidades.Filme;
 import br.com.gui.testes.entidades.Locacao;
 import br.com.gui.testes.entidades.Usuario;
 import br.com.gui.testes.exceptions.FilmeSemEstoqueException;
 import br.com.gui.testes.exceptions.LocadoraException;
-import br.com.gui.testes.matchers.MyMatchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static br.com.gui.testes.builders.LocacaoBuilder.umaLocacao;
 import static br.com.gui.testes.matchers.MyMatchers.*;
 import static br.com.gui.testes.utils.DataUtils.*;
 import static br.com.gui.testes.utils.ListUtils.createFilmeListWithId;
@@ -37,6 +38,7 @@ public class LocacaoServiceTest {
 	private LocacaoService service;
 	private LocacaoDAO dao;
 	private SPCService spcService;
+	private EmailService emailService;
 	
 	@Rule
 	public ErrorCollector error = new ErrorCollector(); //Iremos mudar de assertThat para checkThat
@@ -54,6 +56,8 @@ public class LocacaoServiceTest {
 		service.setLocacaoDAO(dao);
 		spcService = Mockito.mock(SPCService.class);
 		service.setSpcService(spcService);
+		emailService = Mockito.mock(EmailService.class);
+		service.setEmailService(emailService);
 	}
 
 	/**
@@ -265,17 +269,48 @@ public class LocacaoServiceTest {
 	//Mock
 
 	@Test
-	public void naoDeveAlugarFilmeParaUsuarioNegativado() throws FilmeSemEstoqueException, LocadoraException {
+	public void naoDeveAlugarFilmeParaUsuarioNegativado() throws FilmeSemEstoqueException {
 		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
 		Filme filme = FilmeBuilder.umFilme().comNome("Filme 1").comValor(5.0).getFilme();
 
-		Mockito.when(spcService.possuiNegativacao(usuario)).thenReturn(true);
+		Mockito.when(spcService.possuiNegativacao(Mockito.any(Usuario.class))).thenReturn(true);
 
-		exception.expect(LocadoraException.class);
-		exception.expectMessage("Usuario negativado");
+		try {
+			service.alugarFilme(usuario, asList(filme));
+			fail();
+		} catch (LocadoraException e) {
+			assertThat(e.getMessage(), is("Usuario negativado"));
+		}
 
-		service.alugarFilme(usuario, asList(filme));
+		//Verificando se o método possuiNegativacao foi chamado para ESTE usuário
+		Mockito.verify(spcService).possuiNegativacao(usuario);
+	}
 
+	@Test
+	public void deveEnviarEmailParaLocacoesAtrasadas(){
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
+		Usuario usuario2 = UsuarioBuilder.umUsuario().comNome("Usuario 2").getUsuario();
+		Usuario usuario3 = UsuarioBuilder.umUsuario().comNome("Usuario 3").getUsuario();
+		List<Locacao> locacoes = asList(
+				umaLocacao().comUsuario(usuario).atrasada().getLocacao(),
+				umaLocacao().comUsuario(usuario2).getLocacao(),
+				umaLocacao().comUsuario(usuario3).atrasada().getLocacao(),
+				umaLocacao().comUsuario(usuario3).atrasada().getLocacao());
+		Mockito.when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
+
+		service.notificarAtrasos();
+
+		//Verifica se o método emailService foi chamado para o mock emailService passando quaisquer instâncias da classe Usuario (seja usuario, ususario2, etc)
+		Mockito.verify(emailService, Mockito.times(3)).notificarAtraso(Mockito.any(Usuario.class));
+		//Verificando se o método notificarAtraso foi chamado para ESTES usuário
+		Mockito.verify(emailService).notificarAtraso(usuario);
+		Mockito.verify(emailService, Mockito.atLeastOnce()).notificarAtraso(usuario3);
+		//Verificando que o método notificarAtraso nunca foi chamado para ESTE usuário
+		Mockito.verify(emailService, Mockito.never()).notificarAtraso(usuario2);
+		//Verificando que NENHUM outro email, além dos dois priemiros, foi enviado
+		Mockito.verifyNoMoreInteractions(emailService);
+		//Verificando que esse mock não teve nenhuma interação
+		Mockito.verifyZeroInteractions(spcService);
 	}
 
 }

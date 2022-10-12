@@ -11,17 +11,16 @@ import br.com.gui.testes.entidades.Usuario;
 import br.com.gui.testes.exceptions.FilmeSemEstoqueException;
 import br.com.gui.testes.exceptions.LocadoraException;
 import br.com.gui.testes.utils.DataUtils;
-import org.apache.commons.collections4.CollectionUtils;
 
 import static br.com.gui.testes.utils.DataUtils.adicionarDias;
 import static br.com.gui.testes.utils.DataUtils.verificarDiaSemana;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 public class LocacaoService {
 
 	private LocacaoDAO dao;
 	private SPCService spcService;
+	private EmailService emailService;
 
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws LocadoraException, FilmeSemEstoqueException {
 		if(usuario == null){
@@ -38,7 +37,7 @@ public class LocacaoService {
 		}
 
 		Locacao locacao = new Locacao();
-		locacao.setFilme(filmes);
+		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
 		setDesconto(filmes);
@@ -58,12 +57,25 @@ public class LocacaoService {
 		return locacao;
 	}
 
+	/**
+	 * "Manda email" para locações cujas datas de retorno sejam anteriores à data atual
+	 */
+	public void notificarAtrasos(){
+		dao.obterLocacoesPendentes().stream()
+				.filter(locacao -> locacao.getDataRetorno().before(new Date()))
+				.forEach(l -> emailService.notificarAtraso(l.getUsuario()));
+	}
+
 	public void setLocacaoDAO(LocacaoDAO dao){
 		this.dao = dao;
 	}
 
 	public void setSpcService(SPCService spcService){
 		this.spcService = spcService;
+	}
+
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
 	}
 
 	private void setDesconto(List<Filme> filmes) {

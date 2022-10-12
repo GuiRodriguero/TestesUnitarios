@@ -10,7 +10,7 @@ public class Locacao {
 	private Date dataLocacao;
 	private Date dataRetorno;
 	private Double valor;
-	
+
 	public Usuario getUsuario() {
 		return usuario;
 	}
@@ -38,7 +38,7 @@ public class Locacao {
 	public List<Filme> getFilmes() {
 		return filmes;
 	}
-	public void setFilme(List<Filme> filmes) {
+	public void setFilmes(List<Filme> filmes) {
 		this.filmes = filmes;
 	}
 }
