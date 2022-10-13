@@ -21,6 +21,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +37,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(LocacaoService.class)
@@ -64,6 +64,7 @@ public class LocacaoServiceTest {
 	@Before
 	public void setup(){
 		MockitoAnnotations.initMocks(this);
+		service = PowerMockito.spy(service);
 	}
 
 	/**
@@ -353,5 +354,40 @@ public class LocacaoServiceTest {
 		error.checkThat(locacaoRetornada.getValor(), is(12.0));
 		error.checkThat(locacaoRetornada.getDataLocacao(), ehHoje());
 		error.checkThat(locacaoRetornada.getDataRetorno(), ehHojeComDiferencaDeDias(3));
+	}
+
+	//****************************************************************************************************************//
+
+	//PowerMock
+
+	/* TODO: "Inativando/Inutilizando" a chamada do método (privado) setDesconto
+	@Test
+	public void deveAlugarFilmeSemCalcularDesconto() throws Exception {
+		//Cenário
+		Usuario usuario = UsuarioBuilder.umUsuario().getUsuario();
+		PowerMockito.doReturn(12.0).when(service, "setDesconto", List.class);
+
+		List<Filme> filmes = createFilmeListWithId(
+				new Filme("Filme 1", 5, 4.0),
+				new Filme("Filme 2", 4, 4.0),
+				new Filme("Filme 3", 7, 4.0));
+		//Ação
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+
+		//Verificação
+		assertThat(locacao.getValor(), is(12.0));
+	}*/
+
+	@Test
+	public void setDescontoTest() throws Exception {
+		List<Filme> filmes = createFilmeListWithId(
+				new Filme("Filme 1", 5, 4.0),
+				new Filme("Filme 2", 4, 4.0),
+				new Filme("Filme 3", 7, 4.0));
+
+		Whitebox.invokeMethod(service, "setDesconto", filmes);
+
+		double somaFilmesComDesconto = filmes.stream().mapToDouble(Filme::getPrecoLocacao).sum();
+		assertThat(somaFilmesComDesconto, is(11.0));
 	}
 }
