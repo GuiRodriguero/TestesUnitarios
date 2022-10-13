@@ -2,9 +2,14 @@ E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\exceptions\DivisaoPorZ
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\builders\FilmeBuilder.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\entidades\Usuario.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\utils\DataUtils.java
+E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\dao\LocacaoDAOFake.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\matchers\DataDiferencaDiasMatcher.java
+E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\runners\ParallelRunner.java
+E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\builders\LocacaoBuilder.java
+E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\dao\LocacaoDAO.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\matchers\MyMatchers.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\builders\UsuarioBuilder.java
+E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\servicos\SPCService.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\servicos\LocacaoService.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\utils\ListUtils.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\entidades\Filme.java
@@ -12,4 +17,5 @@ E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\matchers\DiaSemanaMatc
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\exceptions\FilmeSemEstoqueException.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\exceptions\LocadoraException.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\entidades\Locacao.java
+E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\servicos\EmailService.java
 E:\GitHub\TestesUnitarios\src\main\java\br\com\gui\testes\entidades\Calculadora.java

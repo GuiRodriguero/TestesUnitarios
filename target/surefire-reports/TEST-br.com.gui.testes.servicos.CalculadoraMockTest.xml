@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="5" failures="0" name="br.com.gui.testes.servicos.CalculadoraMockTest" time="0.412" errors="0" skipped="0">
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.com.gui.testes.servicos.CalculadoraMockTest" time="1.043" tests="5" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="java.vm.version" value="11.0.12+8-LTS-237"/>
@@ -21,8 +21,7 @@
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.io.tmpdir" value="C:\Users\guiro\AppData\Local\Temp\"/>
-    <property name="line.separator" value="
-"/>
+    <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="user.variant" value=""/>
     <property name="os.name" value="Windows 10"/>
@@ -64,9 +63,9 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="br.com.gui.testes.servicos.CalculadoraMockTest" name="teste2" time="0.205"/>
-  <testcase classname="br.com.gui.testes.servicos.CalculadoraMockTest" name="teste3" time="0.205"/>
-  <testcase classname="br.com.gui.testes.servicos.CalculadoraMockTest" name="testeMockitoConfuso" time="0.001"/>
-  <testcase classname="br.com.gui.testes.servicos.CalculadoraMockTest" name="teste" time="0"/>
-  <testcase classname="br.com.gui.testes.servicos.CalculadoraMockTest" name="mockVsSpy" time="0.001"/>
+  <testcase name="mockVsSpy" classname="br.com.gui.testes.servicos.CalculadoraMockTest" time="0.194"/>
+  <testcase name="testeMockitoConfuso" classname="br.com.gui.testes.servicos.CalculadoraMockTest" time="0.243"/>
+  <testcase name="teste3" classname="br.com.gui.testes.servicos.CalculadoraMockTest" time="0.219"/>
+  <testcase name="teste2" classname="br.com.gui.testes.servicos.CalculadoraMockTest" time="0.206"/>
+  <testcase name="teste" classname="br.com.gui.testes.servicos.CalculadoraMockTest" time="0.181"/>
 </testsuite>
