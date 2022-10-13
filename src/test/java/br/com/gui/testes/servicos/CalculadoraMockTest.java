@@ -1,14 +1,17 @@
 package br.com.gui.testes.servicos;
 
 import br.com.gui.testes.entidades.Calculadora;
+import br.com.gui.testes.runners.ParallelRunner;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.*;
 
 import static org.hamcrest.CoreMatchers.is;
 
+@RunWith(ParallelRunner.class)
 public class CalculadoraMockTest {
 
     @Mock

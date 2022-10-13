@@ -1,9 +1,11 @@
 br\com\gui\testes\utils\DataUtils.class
 br\com\gui\testes\entidades\Calculadora.class
 br\com\gui\testes\exceptions\DivisaoPorZeroException.class
+br\com\gui\testes\runners\ParallelRunner.class
 br\com\gui\testes\servicos\LocacaoService.class
 br\com\gui\testes\entidades\Locacao.class
 br\com\gui\testes\matchers\DiaSemanaMatcher.class
+br\com\gui\testes\runners\ParallelRunner$ThreadPool.class
 br\com\gui\testes\builders\FilmeBuilder.class
 br\com\gui\testes\builders\UsuarioBuilder.class
 br\com\gui\testes\entidades\Usuario.class
